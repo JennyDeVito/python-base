@@ -33,8 +33,9 @@ for nome_atividade, atividade in atividades:
 
     #sala que tem interseccão com a atividade
     atividade_sala1 = set(sala1) & set(atividade)
+    #exemplo de como tambem pode ser feito
     atividade_sala2 = set(sala2).intersection(atividade)
-            
+    
     print("Sala 1: ", atividade_sala1)
     print("Sala 2: ", atividade_sala2)
     print("#" * 50)
