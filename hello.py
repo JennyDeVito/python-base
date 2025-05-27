@@ -18,7 +18,7 @@ Execution:
 """
 
 #metada
-__version__ = "0.0.1"
+__version__ = "0.1.2"
 __author__ = "Jenny DeVito"
 __license__ = "Unlicense"
 
@@ -26,17 +26,13 @@ __license__ = "Unlicense"
 import os
 current_language = os.getenv("LANG", "en_US")[:5]
 
-msg = "Hello, World!"
+msg = {
+    "en_US": "Hello, World!",
+    "pt_BR": "Olá, Mundo!",
+    "it_IT": "Ciao, Mondo!",
+    "es_SP": "\u00A1Hola, Mundo!",
+    "ja_JP": "Konichiwa, Sekai!",
+    "fr_FR": "Bonjour, Monde!"
+}
 
-if  current_language == "pt_BR":
-    msg = "Olá, Mundo!"
-elif current_language == "it_IT":
-    msg = "Ciao, Mondo!"
-elif current_language == "es_SP":
-    msg = "\u00A1Hola, Mundo!"
-elif current_language == "ja_JP":
-    msg = "Konichiwa, Sekai!"
-elif current_language == "fr_FR":
-    msg = "Bonjour, Monde!"
-
-print(msg)
+print(msg[current_language])
