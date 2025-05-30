@@ -2,7 +2,7 @@
 
 """Prefix calculator.
 
-Functioning:
+Function:
 
 [operation] [n1] [n2]
 
@@ -13,22 +13,23 @@ mul -> *
 div -> /
 
 Usage:
-$ prefixcalc.py sum 5 2
-7
+$ prefixcalc.py sum 5 2 --'logfilename'
+The result is = 7
 
-$ prefixcalc.py mul 10 5
-50
+$ prefixcalc.py mul 10 5 --'logfilename'
+The result is = 50
 
 $ prefixcalc.py
 operation: sum
 n1: 5
 n2: 4
-9
+Log filename: 
+The result is = 9
 
-The results will be saved in 'prefixcalc.log'
+The results will be saved in --'logfilename'
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "Jenny DeVito"
 __license__ = "Unlicense"
 
@@ -45,16 +46,21 @@ if not arguments:
     operation = input("Operation: ")
     n1 = input("n1: ")
     n2 = input("n2: ")
-    arguments = [operation, n1, n2]
+    logfilename = input("Type your log's filename: ")
+    arguments = [operation, n1, n2, logfilename]	
+    
 #checks if there are 3 arguments and kills program if there aren´t 
-elif len(arguments) != 3:
+elif len(arguments) != 4:
     print("Error! Invalid number of arguments")
-    print("Example: 'sum 7 6'")
+    print("Example: 'sum 7 6 --logfilename'")
 # sys.exit(1) tells the terminal that the program ended in error
     sys.exit(1) 
 
 #unpacks arguments into operation and numbers into a list nums
-operation, *nums = arguments
+operation, *nums, logfile = arguments
+
+#adjusts the log filename
+logfile = logfile.lstrip("-") + ".log"
 
 #create a list of valid operations
 valid_operations = ("sum", "sub", "mul", "div")
@@ -103,7 +109,7 @@ elif operation == "div":
     result = n1 / n2
 
 path = os.curdir
-filepath = os.path.join(path, "prefixcalc.log")
+filepath = os.path.join(path, logfile)
 timestamp = datetime.now().isoformat()
 user = os.getenv("USER","anonymous")
 
@@ -115,4 +121,4 @@ with open(filepath, "a") as file_:
 #print(f"{operation}: {n1}, {n2} = {result}", file=open(filepath, "a"))
 
 #prints the result
-print(f"O resultado é {result}")
+print(f"The result is = {result}")
