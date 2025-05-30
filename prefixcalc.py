@@ -24,13 +24,17 @@ operation: sum
 n1: 5
 n2: 4
 9
+
+The results will be saved in 'prefixcalc.log'
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Jenny DeVito"
 __license__ = "Unlicense"
 
+import os
 import sys
+from datetime import datetime
 
 #reads CLI arguments from the program name
 arguments = sys.argv[1:]
@@ -72,7 +76,7 @@ for num in nums:
     if not num.replace(".","").isdigit():
         print(f"Invalid Number {num}")
         sys.exit(1)
-    #if the number has a . turns it into a float
+    #if the number has a '.' turns it into a float
     if "." in num:
         num = float(num)
     #if not turns it into a integer
@@ -97,6 +101,18 @@ elif operation == "div":
         print("Can't divide by zero!")
         sys.exit(1)
     result = n1 / n2
+
+path = os.curdir
+filepath = os.path.join(path, "prefixcalc.log")
+timestamp = datetime.now().isoformat()
+user = os.getenv("USER","anonymous")
+
+#it's most commom to go to this way instead of using print
+with open(filepath, "a") as file_:
+    file_.write(f"{timestamp} - {user} - {operation}: {n1}, {n2} = {result}\n")
+
+#this would be like using print to save the logs:
+#print(f"{operation}: {n1}, {n2} = {result}", file=open(filepath, "a"))
 
 #prints the result
 print(f"O resultado é {result}")
