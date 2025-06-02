@@ -6,7 +6,7 @@ Sends multiples e-mails. For now, just prints the e-mail message on the screen.
 
 DO NOT SPAM!"""
 
-__version__ = "0.1.0" 
+__version__ = "0.1.1" 
 
 import sys
 import os
@@ -25,7 +25,7 @@ path = os.curdir
 filepath = os.path.join(path, filename)
 templatepath = os.path.join(path, templatename)
 
-clientes =[]
+clientes = []
 for line in open(filepath):
     name, email = line.split(",")
 
