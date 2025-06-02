@@ -23,10 +23,10 @@ $ prefixcalc.py
 operation: sum
 n1: 5
 n2: 4
-Log filename: 
+Log filename: filename
 The result is = 9
 
-The results will be saved in --'logfilename'
+The results will be saved in filename.log
 """
 
 __version__ = "0.1.2"
