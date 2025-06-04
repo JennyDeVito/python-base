@@ -29,7 +29,7 @@ The result is = 9
 The results will be saved in filename.log
 """
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __author__ = "Jenny DeVito"
 __license__ = "Unlicense"
 
@@ -41,7 +41,7 @@ from datetime import datetime
 arguments = sys.argv[1:]
 
 #if there were none arguments asks the user to input
-#TODO: usar exeptions
+#Validation
 if not arguments:
     operation = input("Operation: ")
     n1 = input("n1: ")
@@ -49,17 +49,16 @@ if not arguments:
     logfilename = input("Type your log's filename: ")
     arguments = [operation, n1, n2, logfilename]	
     
-#checks if there are 3 arguments and kills program if there aren´t 
+#checks if there are 4 arguments and kills program if there aren´t 
 elif len(arguments) != 4:
     print("Error! Invalid number of arguments")
     print("Example: 'sum 7 6 --logfilename'")
-# sys.exit(1) tells the terminal that the program ended in error
+#sys.exit(1) tells the terminal that the program ended in error
     sys.exit(1) 
-
 #unpacks arguments into operation and numbers into a list nums
 operation, *nums, logfile = arguments
 
-#adjusts the log filename
+#adjusts the log filename so it results in a proper filename with a .log in the end
 logfile = logfile.lstrip("-") + ".log"
 
 #create a list of valid operations
@@ -91,8 +90,12 @@ for num in nums:
     #put the number into the validated number's list
     validated_nums.append(num)
 
-#unpacks the validated numbers list into two variables: n1 and n2
-n1, n2 = validated_nums
+#tries to unpack the validated numbers list into two variables: n1 and n2
+try:
+    n1, n2 = validated_nums
+except ValueError as e:
+    print(f"{str(e)}.")
+    sys.exit(1)
 
 #perform the operations
 #TODO: usar dict de funcoes
@@ -113,12 +116,18 @@ filepath = os.path.join(path, logfile)
 timestamp = datetime.now().isoformat()
 user = os.getenv("USER","anonymous")
 
-#it's most commom to go to this way instead of using print
-with open(filepath, "a") as file_:
-    file_.write(f"{timestamp} - {user} - {operation}: {n1}, {n2} = {result}\n")
-
-#this would be like using print to save the logs:
-#print(f"{operation}: {n1}, {n2} = {result}", file=open(filepath, "a"))
-
 #prints the result
 print(f"The result is = {result}")
+
+#use try to treat premission error handling to save the log
+try:
+    #it's most commom to go to this way instead of using print
+    with open(filepath, "a") as file_:
+        file_.write(f"{timestamp} - {user} - {operation}: {n1}, {n2} = {result}\n")
+except PermissionError as e:
+    #TODO: logging
+    print(f"{str(e)}.")
+    sys.exit(1)
+    
+#this would be like using print to save the logs:
+#print(f"{operation}: {n1}, {n2} = {result}", file=open(filepath, "a"))
