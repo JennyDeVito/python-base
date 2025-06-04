@@ -38,13 +38,22 @@ arguments = {
 
 #iteration on the received CLI command with error handling - for now only typo
 for arg in sys.argv[1:]:
-    #TODO: tratar ValueError
-    key, value = arg.split("=")
+    try:
+        key, value = arg.split("=")
+    except ValueError as e:
+        #TODO: Logging
+        print(f"[Error] {str(e)}")
+        print("You need to use '='")
+        print(f"You passed {arg}")
+        print("Try with '--lang=value'")
+        sys.exit(1)
+        
     key = key.lstrip("-").strip()
     value = value.strip()
+    #validation
     if key not in arguments:
         print(f"Invalid Option '{key}'")
-        sys.exit()
+        sys.exit(1)
     arguments[key] = value
 
 #use the system's language, if None, use the language provided by the user
@@ -68,4 +77,18 @@ msg = {
     "fr_FR": "Bonjour, Monde!"
 }
 
-print(msg[current_language] * int(arguments["count"]))
+#try with default value
+#dictionaries has a get objet, so it is easy to obtain results from it
+#it has a default value to choose from if the users inputted a wrong value
+#but it has no error handling
+#message = msg.get(current_language, msg["en_US"])
+
+#EAFP
+try:
+    message = msg[current_language]
+except KeyError as e:
+    print(f"[Error] {str(e)}")
+    print(f"Language is invalid, please choose from: {list(msg.keys())}")
+    sys.exit(1)
+    
+print(message * int(arguments["count"]))
