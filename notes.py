@@ -12,12 +12,12 @@ $ python3 notes.py read tech
 ...
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 import os
 import sys
 
-#file path and file where the notes will be written
+#filepath and file where the notes will be written
 path = os.curdir
 filepath = os.path.join(path, "notes.txt")
 
@@ -32,16 +32,16 @@ if not arguments:
     print(f"You must give the arguments! {cmds}")
     sys.exit(1)
 
-#validating if there the arguments are correct
+#validating if the arguments are correct
 if arguments[0] not in cmds:
-    print(f"Invalid command {argument[0]}")
+    print(f"Invalid command {arguments[0]}")
 
 #read notes
 if arguments[0] == "read":
     #checks the number of arguments
     if len(arguments) != 2:
         print("Invalid number of arguments!")
-        print("read tagname")
+        print("read 'tagname'")
         sys.exit(1)
 
     for line in open(filepath):
@@ -56,8 +56,13 @@ if arguments[0] == "read":
             
 #write notes
 if arguments[0] == "new":
-    #TODO: exceptions treatment 
-    title = arguments[1]
+    try:
+        title = arguments[1]
+    except IndexError as e:
+        print(f"[Error] {str(e)}.")
+        print("You must give a title to your note!")
+        print("Try: $ python3 notes.py new 'Title'")
+        sys.exit(1)
     text = [
         f"{title}",
         input("tag: ").strip(),
