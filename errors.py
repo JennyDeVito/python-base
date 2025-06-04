@@ -5,24 +5,28 @@
 import os
 import sys
 
-#LBYL - Look Before You Leap
-#look for the file before trying to open it
-#fif exists, ok, if it doesn't personalizes the error message so the user
-#doesn't have access to the scripts (or the programs) sensitive's information
-if os.path.exists("names.txt"):
-    print("O arquivo exitste")
-    input("...") #simulation of a race condition
-    names = open("names.txt").readlines()
-else:
-    print("[Error] Missing file names.txt")
+#EAFP - Easy to Ask for Forgiveness than Permission
+#tries to do someting, if it is not possible, do the exception
+try:
+    names = open("names.txt").readlines() #FileNotFoundError
+#bare except: one exception for all errors - makes impossible to know what
+#went wrong
+#the right thing to do is to create an exception for every possible error
+except FileNotFoundError as e:
+    print(f"{str(e)}.")
     sys.exit(1)
-
-#LBYL - Look Before You Leap
-#checks the lenght of the names list before trying to print it
-#fif exists, ok, if it doesn't personalizes the error message so the user
-#doesn't have access to the scripts (or the programs) sensitive's information
-if len(names) >= 3:
-    print(names[2])
+    #TODO: use retry
+#it is possible to use else in a try, but only if the except is false
 else:
+    print("Success!!!")
+#the try has a finally argument - it is excecuted always, no matter what
+finally:
+    print("Always excecute this!")
+    
+#EAFP - Easy to Ask for Forgiveness than Permission
+#tries to do someting, if it is not possible, do the exception
+try:
+    print(names[2])
+except:
     print("[Error] Missing name in file")
     sys.exit(1)
