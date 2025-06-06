@@ -34,7 +34,6 @@ log.warning("A warning that do not causes errors")
 log.error("Error that affects one execution only")
 log.critical("Error that affects the entire excecution p. ex: missing database")
 """
-print ("-----")
 
 try:
     1 / 0
