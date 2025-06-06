@@ -13,10 +13,10 @@ mul -> *
 div -> /
 
 Usage:
-$ prefixcalc.py sum 5 2 --'logfilename'
+$ prefixcalc.py sum 5 2 --filename
 The result is = 7
 
-$ prefixcalc.py mul 10 5 --'logfilename'
+$ prefixcalc.py mul 10 5 --filename
 The result is = 50
 
 $ prefixcalc.py
@@ -26,17 +26,45 @@ n2: 4
 Log filename: filename
 The result is = 9
 
-The results will be saved in filename.log
+The results will be saved in filename.log. You can use the same file for the
+results, just type the same name and the program will add the results in order.
+
+Errors will be saved in log_prefixcalc.log and also printed on the screen.
 """
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 __author__ = "Jenny DeVito"
 __license__ = "Unlicense"
 
 import os
 import sys
 from datetime import datetime
+import logging
+from logging import handlers
 
+"""LOG CONFIGURATION"""
+#TODO: usar funcão
+#TODO: usar lib (loguru)
+log_level = os.getenv("LOG_LEVEL", "WARNING").upper()
+log = logging.Logger("Jenny", log_level)
+ch = logging.StreamHandler() #sends the log message to the console
+fh = handlers.RotatingFileHandler(
+    "log_prefixcalc.log",
+    maxBytes=2**20, #the ideal is something around 2**20 or 1Mib
+    backupCount=10, #teacher suggested 10 but is to be evaluated
+)
+ch.setLevel(log_level) #console handler
+fh.setLevel(log_level) #file handler
+fmt = logging.Formatter(
+    "%(asctime)s %(name)s %(levelname)s l:%(lineno)d "
+    "f:%(filename)s: %(message)s"
+)
+ch.setFormatter(fmt)
+fh.setFormatter(fmt)
+log.addHandler(ch)
+log.addHandler(fh)
+
+"""MAIN PROGRAM"""
 #reads CLI arguments from the program name
 arguments = sys.argv[1:]
 
@@ -51,9 +79,9 @@ if not arguments:
     
 #checks if there are 4 arguments and kills program if there aren´t 
 elif len(arguments) != 4:
-    print("Error! Invalid number of arguments")
+    print("Invalid number of arguments")
     print("Example: 'sum 7 6 --logfilename'")
-#sys.exit(1) tells the terminal that the program ended in error
+    #sys.exit(1) tells the terminal that the program ended in error
     sys.exit(1) 
 #unpacks arguments into operation and numbers into a list nums
 operation, *nums, logfile = arguments
@@ -94,7 +122,7 @@ for num in nums:
 try:
     n1, n2 = validated_nums
 except ValueError as e:
-    print(f"{str(e)}.")
+    log.error("%s", str(e))
     sys.exit(1)
 
 #perform the operations
@@ -106,10 +134,11 @@ elif operation == "sub":
 elif operation == "mul":
     result = n1 * n2
 elif operation == "div":
-    if n2 == 0:
-        print("Can't divide by zero!")
+    try:
+        result = n1 / n2
+    except ZeroDivisionError as e:
+        log.error("Can't divide by zero!")
         sys.exit(1)
-    result = n1 / n2
 
 path = os.curdir
 filepath = os.path.join(path, logfile)
@@ -125,8 +154,9 @@ try:
     with open(filepath, "a") as file_:
         file_.write(f"{timestamp} - {user} - {operation}: {n1}, {n2} = {result}\n")
 except PermissionError as e:
-    #TODO: logging
-    print(f"{str(e)}.")
+    log.error("You don't have permission to save files on this folder! %s",
+    str(e)
+    )
     sys.exit(1)
     
 #this would be like using print to save the logs:
