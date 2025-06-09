@@ -13,7 +13,7 @@ Pythoon
 Caasaa
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Jenny DeVito"
 __license__ = "Unlicense"
 
@@ -21,10 +21,14 @@ import sys
 
 words = []
 while True:
-    word = input("Type a word (or ENTER to quit): ")
+    word = (input("Type a word (or ENTER to quit): ")).lower().strip()
+    if word.isdigit():
+        print("You must type a word!")
+    else:
+        words.append(word)  
     if word == "":
         break
-    words.append(word)
+    
 #print(words) #debug
 
 vowels = ("a", "e", "i", "o", "u")
