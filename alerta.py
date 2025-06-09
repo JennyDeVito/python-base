@@ -45,7 +45,7 @@ if not data[0].replace(".","").replace("-","").isdigit():
     print(f"Invalid Temperature {data[0]}. Try again.")
     sys.exit(1)
 
-initial_temp = data[0]
+initial_temp = data[0].strip()
 if "." in initial_temp:
     initial_temp = float(data[0])
 else:
