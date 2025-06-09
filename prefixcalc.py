@@ -62,13 +62,11 @@ log.addHandler(fh)
 
 """MAIN PROGRAM"""
 
-#TODO: consertar bug do loop while
+
+#reads CLI arguments from the program name
+arguments = sys.argv[1:]
 
 while True:
-
-    #reads CLI arguments from the program name
-    arguments = sys.argv[1:]
-
     #if there were none arguments asks the user to input
     #Validation
     if not arguments:
@@ -86,6 +84,9 @@ while True:
         sys.exit(1) 
     #unpacks arguments into operation and numbers into a list nums
     operation, *nums, logfile = arguments
+
+    #redefine the arguments list to avoid an infinite loop with the CLI args
+    arguments = []
 
     #adjusts the log filename so it results in a proper filename with a .log 
     #in the end
@@ -166,7 +167,7 @@ while True:
     #print(f"{operation}: {n1}, {n2} = {result}", file=open(filepath, "a"))
 
     cont = input("Type y to continue, any other key to end: ")
-
+    
     if cont != "y":
         break
 
