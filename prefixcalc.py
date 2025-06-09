@@ -62,6 +62,8 @@ log.addHandler(fh)
 
 """MAIN PROGRAM"""
 
+#TODO: consertar bug do loop while
+
 while True:
 
     #reads CLI arguments from the program name
@@ -104,7 +106,6 @@ while True:
     validated_nums = []
     #iterates on each number in nums
     for num in nums:
-        #TODO: usar while mais exeptions
         #checks if is a number
         if not num.replace(".","").isdigit():
             print(f"Invalid Number {num}")
