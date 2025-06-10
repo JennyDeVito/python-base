@@ -31,15 +31,40 @@ while True:
     
 #print(words) #debug
 
-vowels = ("a", "e", "i", "o", "u")
+vowels = ("a", "e", "i", "o", "u", "ã", "õ", "á", "é", "í", "ó", "ú", "ê", "ô")
 
 for index in range(0, len(words)):
     #print(index) #debug
     new_word = ""
     for letter in words[index]:
+        #TODO: remover acento usando funcão
         if letter in vowels:
             #print(letter) #debug
             new_word = new_word + letter
         #print(letter) #debug
         new_word = new_word + letter
     print(new_word)
+
+
+"""Teacher's solution:
+
+words = []
+
+while True:
+    word = input().strip()
+    if not word:
+        break
+
+    final_word = ""
+    for letter in word:
+        #if ternário
+        final_word += (
+            letter * 2
+            if letter.lower() in "aeiouãõáéíóúêô"
+            else letter
+        )
+
+    words.append(final_word)
+
+print(*words, sep="\n")
+"""
