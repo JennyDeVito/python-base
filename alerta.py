@@ -3,14 +3,24 @@
 """Weather alert. 
 
 Based on the temperature and humidity index given, returns to the user an
-alert depending on the conditions:
+alert of the heat conditions, using the heat index formula:
 
-Temperature above 45 degrees: Alert! Extreme Heat Danger
-If temperature times 3 is higher or equal the humidity index: Alert! 
-Humid Heat Danger
-Temperature between 10 and 30 degrees: Normal Weather
-Temperature between 0 and 10 degrees: Cold Weather
-Temperature below 10 degrees: Extreme Cold Weather
+For weather above 80 F:
+
+Heat Index = 0.5 × (Temp + 61 + ((Temp − 68) × 1.2) + (Humidity × 0.094))
+
+Heat index above 54 degrees: EXTREME DANGEROUS HEAT ALERT!
+Heat index between 40 and 54 degrees: DANGEROUS HEAT ALERT!
+Heat index between 32 and 40 degrees: Potencially danger heat!
+Heat index between 27 and 32 degrees: The Weather is Unconfortably Hot
+Heat index under 27 degrees: The Weather is Hot, but not Uncomfortable
+
+For Weather under 80 F:
+
+Temperature between 65 and 80 F: The Weather is just fine
+Temperature between 50 and 65 F: The Weather is Somewhat Cold
+Temperature between 32 and 50 F: The Weather is Pretty Cold
+Temperature under 32 F: THE WEATHER IS FREEZING!!!
 
 Usage:
 $ python3 alerta.py
@@ -22,21 +32,21 @@ Type the temperature, in Celsius or Farenheit: 95, f
 Type the humidity, in percentage: 70
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Jenny DeVito"
 __license__ = "Unlicense"
 
 import sys
 
 data = []
-data = input("Type the temperature, in Celsius (C) or Farenheit (F). \n"
+data = input("Type the temperature, in Celsius (C) or Fahrenheit (F). \n"
     "Separated by a comma: "
     )
     
 data = data.split(",")
 if len(data) != 2:
     print("Please, follow this script instructions!")
-    print("Type the temperature, in Celsius (C) or Farenheit (F)")
+    print("Type the temperature, in Celsius (C) or Fahrenheit (F)")
     print("Example: '35, C' or '95, F'")
     print("Try again")
     sys.exit(1)
@@ -58,35 +68,40 @@ if scale_temp not in correct_temp:
     print("Try again")
     sys.exit(1)
 
-try:
+humidity = -11
+while humidity < 0 or humidity > 100:
     humidity = int(input("Type the humidity index, in percentage: "))
-except ValueError as e:
-    print(f"Type an integer number! {str(e)}")
-    print("You can try once again")
-    try:
-        humidity = int(input("Type the humidity index, in percentage: "))
-    except ValueError as e:
-        print(f"That was your last chance! {str(e)}")
-        print("Start over!")
-        sys.exit(1)
+    if humidity < 0 or humidity > 100:
+        print("\nPlease, type a valid number!")
 
 temp = 0
-if scale_temp == "F":
-    temp = (initial_temp - 32) * (5 / 9)
+if scale_temp == "C":
+    temp = (initial_temp * (9 / 5)) + 32
 else: 
     temp = initial_temp
 
-critical = temp * 3
+if temp > 80:
+    heat_index = 0.5 * (temp + 61 + ((temp - 68) * 1.2) + (humidity * 0.094))
 
-if critical >= humidity:
-    print("\nHUMID HEAT ALERT!\n")
-elif temp > 45:
-    print("\nEXTREME HEAT ALERT!\n")
-elif temp > 30 and temp <= 45:
-    print("\nThe Weather is Hot\n")
-elif temp > 10 and temp <= 30:
-    print("\nThe Weather is Normal\n")
-elif temp > 0 and temp <= 10:
-    print("\nThe Weather is Cold\n")
-elif temp < 0:
-    print("\nEXTREME COLD ALERT!\n")
+    if heat_index > 54:
+        print("\nEXTREME DANGEROUS HEAT ALERT!\n")
+    elif heat_index > 40 and heat_index <= 54:
+        print("\nDANGEROUS HEAT ALERT!\n")
+    elif heat_index > 32 and heat_index <= 40:
+        print("\nPotencially dangerous heat!\n")
+    elif heat_index > 27 and heat_index <= 32:
+        print("\nThe Weather is Uncomfortably Hot\n")
+    else:
+        print("\nThe Weather is Hot, but not Uncomfortable\n")
+
+elif temp > 65 and temp <= 80:
+    print("\nThe Weather is just fine\n")
+
+elif temp > 50 and temp <= 65:
+    print("\nThe Weather is Somewhat Cold\n")
+
+elif temp > 32 and temp <= 50:
+    print("\nThe Weather is Pretty Cold\n")
+
+elif temp < 32:
+    print("\nTHE WEATHER IS FREEZING!!!\n")

@@ -1,3 +1,0 @@
-CLIENT,ROOM,DAYS
-Jenny,4,2
-Frida,4,3
