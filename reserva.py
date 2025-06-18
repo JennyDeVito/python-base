@@ -19,7 +19,7 @@ saying that it is not possible:
 The reservation will be saved in a reserva.txt file.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Jenny DeVito"
 __license__ = "Unlicense"
 
@@ -31,50 +31,38 @@ from logging import handlers
 """LOG CONFIGURATION: log boilerplate"""
 #TODO: usar funcão
 #TODO: usar lib (loguru)
-#links the logging level to a system variable
 log_level = os.getenv("LOG_LEVEL", "WARNING").upper()
-#creating my own logger instance
 log = logging.Logger("Jenny", log_level)
-#stabilishing the handler
 ch = logging.StreamHandler() #sends the log message to the console
-#fh = handlers.RotatingFileHandler(
-#    "meulog_logs.log",
-#    maxBytes=2**20, #the ideal is something around 2**20 or 1Mib
-#    backupCount=10, #teacher suggested 10 but is to be evaluated
-#)
-#setting the level as the debug level
 ch.setLevel(log_level) #console handler
-#fh.setLevel(log_level) #file handler
-#formatting the log message
 fmt = logging.Formatter(
     "%(asctime)s %(name)s %(levelname)s l:%(lineno)d "
     "f:%(filename)s: %(message)s"
 )
-#adds the formatting configuration to the console handler
 ch.setFormatter(fmt)
-#adds the formatting configuration to the file handler
-#fh.setFormatter(fmt)
-#tells that my log has a console handler
 log.addHandler(ch)
-#tells that my log has a file handler
-#log.addHandler(fh)
 
+"""MAIN PROGRAM"""
+#stablishing the filepaths
 path = os.curdir
 read_fp = os.path.join(path, "quartos.txt")
 write_fp = os.path.join(path, "reserva.txt")
 
+#printing the header
 print()
 print("{:^80}".format(f"WELCOME TO THE RESERVATION SYSTEM"))
 print("{:^80}".format(f"ROOMS: AVAILABLE 🟢 | NOT AVAILABLE 🔴"))
 print()
 
+#TODO: usar funcao para ler os arquivos
+#accessing the database
 booked = {}
 try:
     for line in open(write_fp):
         client_name, room_num, days = line.strip().split(",")
         booked[int(room_num)] = {
             "name": client_name,
-            "days": days
+            "days": int(days)
         }
 except FileNotFoundError:
     log.error("Reservation file doesn't exist")
@@ -93,20 +81,32 @@ except FileNotFoundError:
     log.error("Room file doesn't exist")
     sys.exit(1)
 
+auxt_room = "ROOM NAME"
+auxt_price = "PRICE"
+auxt_av = "AVAILABLE"
+print(f"NUMBER  {auxt_room:^12} {auxt_price:^10} {auxt_av:^9}")
+#printing the information on screen
 for code, data in rooms.items():
     available = "🔴" if not data["available"] else "🟢"
     #TODO: substituir casa decimal por virgula
-    print(f"{code}: {data['name']}, {data['price']:.2f} USD {available}")
+    print(
+        f"{code:^6}: {data['name']:^12}"
+        f" {data['price']:^6.2f} USD {available:^9}"
+    )
 
+#message in case all rooms are booked - kills the program
 if len(booked) == len(rooms):
     print("{:^80}".format(f"THE HOTEL IS FULL"))
     print()
-    sys.exit(1)
+    sys.exit(0) #it is not an error
 
+#message to guide the user to make the reservation
 print()
 print("{:^80}".format(f"TO MAKE A RESERVATION, PLEASE:"))
 print()
 
+#TODO: usar funcao para ler os inputs
+#asks the user for information and do the validation
 name = input("Type your name: ").strip()
 if name.isdigit():
     print("You must type letters!")
@@ -130,20 +130,32 @@ except ValueError:
     log.error("You must type a number!")
     sys.exit(1)
 
+#group the info into new variables to make it easy to put it into the message
 room_name = rooms[room]["name"]
 amount = rooms[room]["price"] * stay
 
+#creates a list with the values to write on the reserva.txt file
 reservation = [name, str(room), str(stay)]
 
-with open(write_fp, "a") as file_:
-    file_.write("," .join(reservation) + "\n")
-
+#confirmation message
 print()
 print("{:^80}".format(f"CONFIRMATION"))
 print()
 print(f"{name}, you choose the {room_name} to stay for {stay} day(s)")
 print(f"The amount to be paid starts in {amount:.2f} USD")
 print()
+
+#confirmation
+confirm = ("y", "yes", "s", "sim")
+if input("Do you confirm? [Y/n]: ").strip().lower() in confirm:
+    #write on the reserva.txt file
+    with open(write_fp, "a") as file_:
+        file_.write("," .join(reservation) + "\n")
+else:
+    print("{:^80}".format(f"RESERVATION CANCELED"))
+    sys.exit(0)
+
+#footer note    
 print("{:^80}".format(f"ENJOY YOUR STAY"))
 print("{:^80}".format(f"\N{party popper} \N{party popper} \N{party popper}"))
 print()
